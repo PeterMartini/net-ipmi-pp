@@ -1,0 +1,4 @@
+* Net::IPMI::PP::Structure
+** Net::IPMI::PP::Structure::RMCP
+** Net::IPMI::PP::Structure::ASF
+** Net::IPMI::PP::Structure::IPMI
