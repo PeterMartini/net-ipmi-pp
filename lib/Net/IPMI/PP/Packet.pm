@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Carp qw(confess);
 
-my %len = (c => 1, C => 1, V => 4);
+my %len = (c => 1, C => 1, N => 4);
 
 sub new {
   my ($self, $data) = @_;
