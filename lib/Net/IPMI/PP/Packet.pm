@@ -25,7 +25,13 @@ sub new {
   # Separate out our header and payload
   my $format = join " ", map { $_->{format} } @$fields;
   my @unpacked = unpack $format, $data;
-  $self->{header} = { map { $fields->[$_]{name} => $unpacked[$_]} (0..$#unpacked) };
+  $self->{header} = {
+    map {
+      $fields->[$_]{name} =>
+        $self->constant($fields->[$_]{name},$unpacked[$_])
+    }
+    (0..$#unpacked)
+  };
   $self->{payload} = substr $data, $size;
 
   return $self;
