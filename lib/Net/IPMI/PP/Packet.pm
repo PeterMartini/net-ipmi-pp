@@ -1,38 +1,29 @@
 package Net::IPMI::PP::Packet;
 use strict;
 use warnings;
-use Carp qw(confess);
+use Carp qw(croak confess);
 
 my %len = (c => 1, C => 1, N => 4);
 
-sub new {
-  my ($self, $data) = @_;
+sub unpack {
+  my ($class, $data) = @_;
+  confess "Insufficient arguments" unless defined $data;
 
-  my $size;
-  my $fields = $self->{fields};
+  my $self = bless {}, $class;
+  my $fields = $self->fields;
   confess "Missing `fields' structure" unless defined $fields;
-  confess "Cannot use `new' on an existing Packet"
-    if defined $self->{header} || defined $self->{payload};
 
-  # Count how much of the data we're absorbing
-  for my $field (@$fields){ 
-    my ($format, $count) = ($field->{format} =~ /^(\w)(\d+)?$/);
-    $count = 1 unless defined $count;
-    confess "Invalid format: $format" unless defined $len{$format};
-    $size += $len{$format} * $count;
+  my $pos = 0;
+  for my $fieldspec (@$fields) {
+    my $name = $fieldspec->{name};
+    my $format = $fieldspec->{format};
+    my $value = unpack $fieldspec->{format}, substr($data, $pos);
+    croak "Invalid packet: could not decode $name"
+      unless defined $value;
+    $pos += $len{$fieldspec->{format}};
+    $self->{header}{$name} = $self->constant($name, $value);
   }
-
-  # Separate out our header and payload
-  my $format = join " ", map { $_->{format} } @$fields;
-  my @unpacked = unpack $format, $data;
-  $self->{header} = {
-    map {
-      $fields->[$_]{name} =>
-        $self->constant($fields->[$_]{name},$unpacked[$_])
-    }
-    (0..$#unpacked)
-  };
-  $self->{payload} = substr $data, $size;
+  $self->{payload} = substr($data, $pos);
 
   return $self;
 }

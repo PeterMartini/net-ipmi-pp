@@ -13,18 +13,7 @@ my @fields = (
   { format => 'C', name => 'reserved' },
   { format => 'C', name => 'len' },
 );
-
-sub new {
-  my $class = shift;
-  confess __PACKAGE__ . "::new called with no arguments" unless defined $class;
-
-  my $data = ($class eq __PACKAGE__ ? shift : $class);
-  confess "new called with no arguments" unless defined $data;
-  confess "Too many arguments to new" if @_ > 0;
-
-  my $self = bless { fields => \@fields };
-  return $self->SUPER::new($data);
-}
+sub fields { return \@fields; }
 
 my %constants = (
   iana => {

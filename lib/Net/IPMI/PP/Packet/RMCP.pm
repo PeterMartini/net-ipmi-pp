@@ -12,18 +12,7 @@ my @fields = (
   { format => 'C', name => 'sequence' },
   { format => 'C', name => 'classid' },
 );
-
-sub new {
-  my $class = shift;
-  confess __PACKAGE__ . "::new called with no arguments" unless defined $class;
-
-  my $data = ($class eq __PACKAGE__ ? shift : $class);
-  confess "new called with no arguments" unless defined $data;
-  confess "Too many arguments to new" if @_ > 0;
-
-  my $self = bless { fields => \@fields };
-  return $self->SUPER::new($data);
-}
+sub fields { return \@fields; }
 
 my %constants = (
   ver => {
@@ -35,7 +24,6 @@ my %constants = (
     8 => "OEM",
   }
 );
-
 sub constant {
   confess "constant called without arguments" if @_ == 0;
   shift if ref $_[0] eq __PACKAGE__;

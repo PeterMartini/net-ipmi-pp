@@ -5,19 +5,15 @@ use Net::IPMI::PP::Packet::RMCP;
 my @warnings;
 $SIG{__WARN__} = sub { push @warnings, "@_"; };
 
-use Test::More tests => 49;
+use Test::More tests => 47;
 
 # Check for errors
 {
-  eval 'my $packet = Net::IPMI::PP::Packet::RMCP::new';
-  like $@, qr/called with no arguments/, "Croak if ::new called without data";
-  eval 'my $packet = Net::IPMI::PP::Packet::RMCP->new';
-  like $@, qr/called with no arguments/, "Croak if ->new called without data";
+  eval 'my $packet = Net::IPMI::PP::Packet::RMCP->unpack';
+  like $@, qr/Insufficient arguments/, "Croak if ->unpack called without data";
 
-  eval 'my $packet = Net::IPMI::PP::Packet::RMCP::new(1,2);';
-  like $@, qr/Too many/, "Croak if ::new called with extra data";
-  eval 'my $packet = Net::IPMI::PP::Packet::RMCP->new(1,2);';
-  like $@, qr/Too many/, "Croak if ->new called with with extra data";
+  eval 'my $packet = Net::IPMI::PP::Packet::RMCP->unpack(1,2);';
+  like $@, qr/could not decode/, "Croak if ->unpack called with with extra data";
 }
 
 # Constants tests
@@ -25,7 +21,7 @@ use Test::More tests => 49;
 # Test RMCP_VERSION_1 + ASF
 {
   my $data = "\x06\x00\xff\x06\x39";
-  my $packet = Net::IPMI::PP::Packet::RMCP::new($data);
+  my $packet = Net::IPMI::PP::Packet::RMCP->unpack($data);
   isnt $packet, undef, "A packet was returned";
   is ref $packet, "Net::IPMI::PP::Packet::RMCP", "And its the right type";
   is $packet->{header}{ver}+0, 6, "version+0 is 6";
@@ -40,7 +36,7 @@ use Test::More tests => 49;
 # Test UNKNOWN version + ASF
 {
   my $data = "\xff\x00\xff\x06\x39";
-  my $packet = Net::IPMI::PP::Packet::RMCP::new($data);
+  my $packet = Net::IPMI::PP::Packet::RMCP->unpack($data);
   isnt $packet, undef, "A packet was returned";
   is ref $packet, "Net::IPMI::PP::Packet::RMCP", "And its the right type";
   is $packet->{header}{ver}+0, 255, "version+0 is 255";
@@ -55,7 +51,7 @@ use Test::More tests => 49;
 # Test RMCP_VERSION_1 + IPMI
 {
   my $data = "\x06\x00\xff\x07\x39";
-  my $packet = Net::IPMI::PP::Packet::RMCP::new($data);
+  my $packet = Net::IPMI::PP::Packet::RMCP->unpack($data);
   isnt $packet, undef, "A packet was returned";
   is ref $packet, "Net::IPMI::PP::Packet::RMCP", "And its the right type";
   is $packet->{header}{ver}+0, 6, "version+0 is 6";
@@ -70,7 +66,7 @@ use Test::More tests => 49;
 # Test RMCP_VERSION_1 + OEM
 {
   my $data = "\x06\x00\xff\x08\x39";
-  my $packet = Net::IPMI::PP::Packet::RMCP::new($data);
+  my $packet = Net::IPMI::PP::Packet::RMCP->unpack($data);
   isnt $packet, undef, "A packet was returned";
   is ref $packet, "Net::IPMI::PP::Packet::RMCP", "And its the right type";
   is $packet->{header}{ver}+0, 6, "version+0 is 6";
@@ -85,7 +81,7 @@ use Test::More tests => 49;
 # Test RMCP_VERSION_1 + UNKNOWN
 {
   my $data = "\x06\x00\xff\xff\x39";
-  my $packet = Net::IPMI::PP::Packet::RMCP::new($data);
+  my $packet = Net::IPMI::PP::Packet::RMCP->unpack($data);
   isnt $packet, undef, "A packet was returned";
   is ref $packet, "Net::IPMI::PP::Packet::RMCP", "And its the right type";
   is $packet->{header}{ver}+0, 6, "version+0 is 6";
@@ -96,3 +92,4 @@ use Test::More tests => 49;
   is "$packet->{header}{classid}", "UNKNOWN", "\"classid\" is UNKNOWN";
   is $packet->{payload}, 9, "The payload is what's expected";
 }
+
