@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Carp qw(croak confess);
 
-my %len = (c => 1, C => 1, N => 4);
+my %len = (c => 1, C => 1, N => 4, a => 1);
 
 sub unpack {
   my ($class, $data) = @_;
@@ -17,6 +17,8 @@ sub unpack {
   for my $fieldspec (@$fields) {
     my $name = $fieldspec->{name};
     my ($format, $count) = ($fieldspec->{format} =~ /^(\D+)(\d+)?$/);
+    confess "Illegal format code: $format" unless defined $format;
+    confess "Illegal format code: $format" unless defined $len{$format};
     $count = 1 unless defined $count;
     my $value = unpack $fieldspec->{format}, substr($data, $pos);
     croak "Invalid packet: could not decode $name"

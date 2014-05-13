@@ -37,7 +37,7 @@ use Test::More tests => 24;
   is $pong->{header}{oem}, 0, "oem is 0";
   is $pong->{header}{entities}, 0x81, "entities is 0x81";
   is $pong->{header}{interactions}, 0, "interactions is 0";
-  is $pong->{header}{reserved}, 0, "reserved is 0";
+  is $pong->{header}{reserved}, "\x00\x00\x00\x00\x00\x00", "reserved is 6 NULL bytes";
   is $pong->{payload}, "", "payload is an empty string";
 }
 

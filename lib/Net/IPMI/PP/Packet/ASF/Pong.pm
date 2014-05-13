@@ -11,7 +11,7 @@ my @fields = (
   { format => 'N', name => 'oem' },
   { format => 'C', name => 'entities' },
   { format => 'C', name => 'interactions' },
-  { format => 'C6', name => 'reserved' },
+  { format => 'a6', name => 'reserved' },
 );
 sub fields { return \@fields; }
 
