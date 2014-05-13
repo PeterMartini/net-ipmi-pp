@@ -6,10 +6,10 @@ use Carp qw(croak confess);
 my %len = (c => 1, C => 1, N => 4, a => 1);
 
 sub unpack {
-  my ($class, $data) = @_;
+  my ($obj, $data) = @_;
   confess "Insufficient arguments" unless defined $data;
 
-  my $self = bless {}, $class;
+  my $self = (ref $obj eq '' ? bless {}, $obj : $obj);
   my $fields = $self->fields;
   confess "Missing `fields' structure" unless defined $fields;
 
@@ -24,11 +24,20 @@ sub unpack {
     croak "Invalid packet: could not decode $name"
       unless defined $value;
     $pos += ($len{$format} * $count);
-    $self->{header}{$name} = $self->constant($name, $value);
+    if (ref $name eq "HASH") {
+      while(my ($subname, $subspec) = each %$name) {
+        my ($mask, $shift) = ($subspec->{mask}, $subspec->{shift});
+        confess "Illegal name spec (mask missing) in $subname" unless defined $mask;
+        confess "Illegal name spec (shift missing) in $subname" unless defined $shift;
+        my $value = (($value & $mask) >> $shift);
+        $self->{$subname} = $self->constant($subname, $value);
+      }
+    } else {
+      $self->{$name} = $self->constant($name, $value);
+    }
   }
-  $self->{payload} = substr($data, $pos);
 
-  return $self;
+  return ($self, substr($data, $pos));
 }
 
 1;
