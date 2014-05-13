@@ -16,11 +16,12 @@ sub unpack {
   my $pos = 0;
   for my $fieldspec (@$fields) {
     my $name = $fieldspec->{name};
-    my $format = $fieldspec->{format};
+    my ($format, $count) = ($fieldspec->{format} =~ /^(\D+)(\d+)?$/);
+    $count = 1 unless defined $count;
     my $value = unpack $fieldspec->{format}, substr($data, $pos);
     croak "Invalid packet: could not decode $name"
       unless defined $value;
-    $pos += $len{$fieldspec->{format}};
+    $pos += ($len{$format} * $count);
     $self->{header}{$name} = $self->constant($name, $value);
   }
   $self->{payload} = substr($data, $pos);
