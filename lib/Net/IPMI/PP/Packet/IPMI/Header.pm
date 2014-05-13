@@ -20,6 +20,7 @@ sub fields { return \@fields; }
 my %constants = (
   'target_netfn' => {
     6 => 'Application Request',
+    7 => 'Application Response',
   },
 );
 sub constant {
