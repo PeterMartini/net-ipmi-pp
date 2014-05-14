@@ -17,7 +17,7 @@ use Test::More tests => 65;
   my $data = "${pkt_rmcp}${pkt_ipmi_sess}${pkt_ipmi_resp}";
 
   (my $rmcp, $data) = Net::IPMI::PP::Packet::RMCP->unpack($data);
-  isnt $rmcp, undef, "A rmcp was returned";
+  isnt $rmcp, undef, "An RMCP packet was returned";
   is ref $rmcp, "Net::IPMI::PP::Packet::RMCP", "And its the right type";
   is $rmcp->{ver}+0, 6, "version+0 is 6";
   is "$rmcp->{ver}", "RMCP_VERSION_1", "\"version\" is RMCP_VERSION_1";
