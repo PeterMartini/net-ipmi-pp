@@ -8,12 +8,12 @@ use Net::IPMI::PP::Packet::IPMI::Request;
 my $warnings;
 $SIG{__WARN__} = sub { $warnings++; };
 
-use Test::More tests => 35;
+use Test::More tests => 36;
 
 {
   my $pkt_rmcp = "\x06\x00\xff\07";
   my $pkt_ipmi_sess = "\x02\x00\x00\x00\x00\x00\x0e\x00\x02" .
-                      "\xfb\xb6\x4d\x63\x53\x6c\x8a\x4f\xb0\x2d\x9e\x51\x5f\x77\xcb\x29" .
+                      "\xa9\xf4\xb0\x7a\x36\x88\xdf\x38\xfc\x6b\x7a\x7f\x1a\xa1\x59\xe5" .
                       "\x1d"
                     ;
   my $pkt_ipmi_req = "\x20\x18\xc8\x81\x0c\x3a\x02\x04\x71" .
@@ -38,8 +38,9 @@ use Test::More tests => 35;
   is "$session->{auth_type}", "MD5", "\"auth_type\" is MD5";
   is $session->{session_seq}, 0, "session_seq is 0";
   is $session->{session_id}, 0x000e0002, "session_id is 0x000e0002";
-  is $session->{auth_code}, "\xfb\xb6\x4d\x63\x53\x6c\x8a\x4f\xb0\x2d\x9e\x51\x5f\x77\xcb\x29",
+  is $session->{auth_code}, "\xa9\xf4\xb0\x7a\x36\x88\xdf\x38\xfc\x6b\x7a\x7f\x1a\xa1\x59\xe5",
     "Auth Code properly unpacked";
+  is $session->generate_md5("test", $data), $session->{auth_code}, "Validated password of 'test'";
   is $session->{len}, 0x1d, "len is 0x1d";
   is $data, $pkt_ipmi_req, "The payload is the IPMI request";
 

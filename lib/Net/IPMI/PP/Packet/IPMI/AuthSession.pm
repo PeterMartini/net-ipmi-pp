@@ -36,4 +36,21 @@ sub constant {
   return dualvar($value, $constants{$field}{$value});
 }
 
+sub generate_md5 {
+  # payload is the IPMI request/response in packed form
+  my ($self, $pass, $payload) = @_;
+  confess "generate_md5 called without a password" unless defined $pass;
+  confess "generate_md5 called without a payload" unless defined $payload;
+  $pass = pack "Z16", $pass;
+
+  use Digest::MD5 qw(md5);
+  return md5(
+    $pass .
+    pack("N", $self->{session_id}) .
+    $payload .
+    pack("N", $self->{session_seq}) .
+    $pass
+  );
+}
+
 1;
