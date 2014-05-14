@@ -6,7 +6,7 @@ use Net::IPMI::PP::Packet::IPMI::Header;
 use Net::IPMI::PP::Packet::IPMI::Request;
 
 my $warnings;
-# $SIG{__WARN__} = sub { $warnings++; };
+$SIG{__WARN__} = sub { $warnings++; };
 
 use Test::More tests => 36;
 
