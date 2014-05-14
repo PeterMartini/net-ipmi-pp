@@ -20,6 +20,7 @@ sub fields { return \@fields; }
 my %requestclasses = (
   0x38 => "GetChannelAuth",
   0x39 => "GetSessionChallenge",
+  0x3a => "ActivateSession",
 );
 
 sub unpack {
@@ -38,6 +39,7 @@ my %constants = (
   'command' => {
     0x38 => 'Get Channel Authentication Capabilities',
     0x39 => 'Get Session Challenge',
+    0x3a => 'Activate Session',
   },
 );
 sub constant {
