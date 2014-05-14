@@ -16,7 +16,11 @@ sub fields { return \@fields; }
 
 my %constants = (
   auth_type => {
-    0 => "NONE",
+    0 => "None",
+    1 => "MD2",
+    2 => "MD5",
+    4 => "Unencrypted",
+    5 => "OEM",
   },
 );
 sub constant {

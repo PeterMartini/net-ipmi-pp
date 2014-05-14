@@ -29,7 +29,7 @@ use Test::More tests => 65;
 
   (my $session, $data) = Net::IPMI::PP::Packet::IPMI::Session->unpack($data);
   is $session->{auth_type}+0, 0, "iana+0 is 4542";
-  is "$session->{auth_type}", "NONE", "\"auth_type\" is NONE";
+  is "$session->{auth_type}", "None", "\"auth_type\" is None";
   is $session->{session_seq}, 0, "session_seq is 0";
   is $session->{session_id}, 0, "session_id is 0";
   is $session->{len}, 0x10, "len is 0x10";
