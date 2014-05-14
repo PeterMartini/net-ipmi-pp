@@ -21,8 +21,6 @@ sub unpack {
     confess "Illegal format code: $format" unless defined $len{$format};
     $count = 1 unless defined $count;
     my $value = unpack $fieldspec->{format}, substr($data, $pos);
-do { use Data::Dumper; print Dumper($self); }
-      unless defined $value;
     croak "Invalid packet: could not decode $name"
       unless defined $value;
     $pos += ($len{$format} * $count);
