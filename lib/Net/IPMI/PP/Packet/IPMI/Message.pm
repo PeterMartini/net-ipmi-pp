@@ -23,7 +23,7 @@ my %requestclasses = (
 
 sub unpack {
   my ($class, $data) = @_;
-  (my $self, $data) = (bless {})->SUPER::unpack($data);
+  (my $self, $data) = Net::IPMI::PP::Packet::unpack(bless({}, $class), $data);
   my $commandpkg = $requestclasses{0+$self->{command}};
   croak "No support for command type: $self->{command} (" . 0+$self->{command} .")"
     unless defined $commandpkg;
@@ -40,7 +40,7 @@ my %constants = (
 );
 sub constant {
   confess "constant called without arguments" if @_ == 0;
-  shift if ref $_[0] eq __PACKAGE__;
+  my $self = shift;
   my ($field, $value) = @_;
   confess "constant called without a field" unless defined $field;
   confess "constant called without a value" unless defined $value;
