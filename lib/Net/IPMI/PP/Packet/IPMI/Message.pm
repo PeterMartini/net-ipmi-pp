@@ -25,7 +25,7 @@ sub unpack {
   my ($class, $data) = @_;
   (my $self, $data) = Net::IPMI::PP::Packet::unpack(bless({}, $class), $data);
   my $commandpkg = $requestclasses{0+$self->{command}};
-  croak "No support for command type: $self->{command} (" . 0+$self->{command} .")"
+  croak "No support for command type: $self->{command} (" . ($self->{command}+0) .")"
     unless defined $commandpkg;
   my $package = "${class}::${commandpkg}";
   eval "require $package" or confess "Could not find package: $package";
