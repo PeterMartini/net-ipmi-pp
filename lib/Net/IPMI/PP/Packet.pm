@@ -4,6 +4,7 @@ use warnings;
 use Carp qw(croak confess);
 
 my %len = (c => 1, C => 1, N => 4, a => 1);
+sub is_numeric_type { return ($_[0] =~ /^[cCN]$/);}
 
 sub unpack {
   my ($obj, $data) = @_;
@@ -51,7 +52,7 @@ sub pack {
     confess "Illegal format code: $format" unless defined $len{$format};
     $count = 1 unless defined $count;
 
-    my $value = 0;
+    my $value = is_numeric_type($format) ? 0 : "";
     if (ref $name eq "HASH") {
       while(my ($subname, $subspec) = each %$name) {
         my ($mask, $shift) = ($subspec->{mask}, $subspec->{shift});
@@ -60,7 +61,7 @@ sub pack {
         $value |= (($value & $mask) << $shift);
       }
     } else {
-      $value = defined $self->{$name} ? $self->{$name} : "";
+      $value = $self->{$name} if defined $self->{$name};
     }
     $packed .= pack $fieldspec->{format}, $value;
   }
