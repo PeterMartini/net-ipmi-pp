@@ -40,4 +40,31 @@ sub unpack {
   return ($self, substr($data, $pos));
 }
 
+sub pack {
+  my $self = shift;
+  my $fields = $self->fields;
+  my $packed = "";
+  for my $fieldspec (@$fields) {
+    my $name = $fieldspec->{name};
+    my ($format, $count) = ($fieldspec->{format} =~ /^(\D+)(\d+)?$/);
+    confess "Illegal format code: $format" unless defined $format;
+    confess "Illegal format code: $format" unless defined $len{$format};
+    $count = 1 unless defined $count;
+
+    my $value = 0;
+    if (ref $name eq "HASH") {
+      while(my ($subname, $subspec) = each %$name) {
+        my ($mask, $shift) = ($subspec->{mask}, $subspec->{shift});
+        confess "Illegal name spec (mask missing) in $subname" unless defined $mask;
+        confess "Illegal name spec (shift missing) in $subname" unless defined $shift;
+        $value |= (($value & $mask) << $shift);
+      }
+    } else {
+      $value = defined $self->{$name} ? $self->{$name} : "";
+    }
+    $packed .= pack $fieldspec->{format}, $value;
+  }
+  return $packed;
+}
+
 1;
