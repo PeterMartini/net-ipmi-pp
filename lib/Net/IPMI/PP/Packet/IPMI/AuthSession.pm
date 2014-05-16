@@ -4,7 +4,6 @@ use parent 'Net::IPMI::PP::Packet';
 use strict;
 use warnings;
 use Carp qw(confess);
-use Scalar::Util qw(dualvar);
 
 my @fields = (
   { format => 'C', name => 'auth_type' },
@@ -24,17 +23,7 @@ my %constants = (
     5 => "OEM",
   },
 );
-sub constant {
-  confess "constant called without arguments" if @_ == 0;
-  shift if ref $_[0] eq __PACKAGE__;
-  my ($field, $value) = @_;
-  confess "constant called without a field" unless defined $field;
-  confess "constant called without a value" unless defined $value;
-
-  return $value if ! defined $constants{$field};
-  return dualvar($value, "UNKNOWN") if ! defined $constants{$field}{$value};
-  return dualvar($value, $constants{$field}{$value});
-}
+sub constants { return \%constants; }
 
 sub generate_md5 {
   # payload is the IPMI request/response in packed form

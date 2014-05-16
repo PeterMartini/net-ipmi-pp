@@ -2,6 +2,7 @@ package Net::IPMI::PP::Packet;
 use strict;
 use warnings;
 use Carp qw(croak confess);
+use Scalar::Util qw(dualvar);
 
 my %len = (c => 1, C => 1, N => 4, a => 1);
 sub is_numeric_type { return ($_[0] =~ /^[cCN]$/);}
@@ -66,6 +67,18 @@ sub pack {
     $packed .= pack $fieldspec->{format}, $value;
   }
   return $packed;
+}
+
+sub constant {
+  my $self = shift;
+  my $constants = $self->constants;
+  my ($field, $value) = @_;
+  confess "constant called without a field" unless defined $field;
+  confess "constant called without a value" unless defined $value;
+
+  return $value if ! defined $constants->{$field};
+  return dualvar($value, "UNKNOWN") if ! defined $constants->{$field}{$value};
+  return dualvar($value, $constants->{$field}{$value});
 }
 
 1;

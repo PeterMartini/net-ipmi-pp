@@ -5,7 +5,6 @@ use strict;
 use warnings;
 # Convention: confess for programming errors, croak for data errors
 use Carp qw(confess croak);
-use Scalar::Util qw(dualvar);
 
 my @fields = (
   { format => 'C', name => 'target_addr' },
@@ -23,17 +22,7 @@ my %constants = (
     7 => 'Application Response',
   },
 );
-sub constant {
-  confess "constant called without arguments" if @_ == 0;
-  shift if ref $_[0] eq __PACKAGE__;
-  my ($field, $value) = @_;
-  confess "constant called without a field" unless defined $field;
-  confess "constant called without a value" unless defined $value;
-
-  return $value if ! defined $constants{$field};
-  return dualvar($value, "UNKNOWN") if ! defined $constants{$field}{$value};
-  return dualvar($value, $constants{$field}{$value});
-}
+sub constants { return \%constants; }
 
 sub is_valid_checksum {
   my $header = shift;
